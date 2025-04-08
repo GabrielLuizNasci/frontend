@@ -2,18 +2,55 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { ChakraProvider, createSystem, defineConfig, } from '@chakra-ui/react';
+
+const config = defineConfig({
+  theme: {
+    breakpoints: {
+      sm: "320px",
+      md: "768px",
+      lg: "960px",
+      xl: "1200px",
+    },
+    tokens: {
+      colors: {
+        P1: { value: "#000000" },
+        P2: { value: "#ffd700" },
+        S4: { value: "#EE0F0F" },
+      },
+    },
+    semanticTokens: {
+      colors: {
+        danger: { value: "{colors.S4}" },
+      },
+    },
+    keyframes: {
+      spin: {
+        from: { transform: "rotate(0deg)" },
+        to: { transform: "rotate(360deg)" },
+      },
+    },
+  },
+  globalCss: {
+    "html, body": {
+      margin: 0,
+      padding: 0,
+    },
+  },
+})
+
+const system = createSystem(config)
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ChakraProvider value={system}>
+      <App />
+    </ChakraProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
