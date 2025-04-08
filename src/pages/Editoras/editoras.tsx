@@ -40,15 +40,15 @@ useEffect(() => {
                         <Table.Row>
                         <Table.ColumnHeader>Id</Table.ColumnHeader>
                         <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                        <Table.ColumnHeader>Quantidade de Livros</Table.ColumnHeader>
+                        <Table.ColumnHeader>Número de Livros</Table.ColumnHeader>
                         <Table.ColumnHeader textAlign="end">Ações</Table.ColumnHeader>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {editoras.map((editora) => (
                         <Table.Row key={editora.id}>
+                            <Table.Cell>{editora.id}</Table.Cell>
                             <Table.Cell>{editora.nome}</Table.Cell>
-                            <Table.Cell>{editora.quantLivros}</Table.Cell>
                             <Table.Cell textAlign="end">{editora.quantLivros}</Table.Cell>
                         </Table.Row>
                         ))}
@@ -59,7 +59,7 @@ useEffect(() => {
             <Drawer.Root>
                 <Drawer.Trigger asChild>
                     <Button variant="outline" size="sm">
-                    Open Drawer
+                    Criar Editora
                     </Button>
                 </Drawer.Trigger>
                 <Portal>
@@ -67,7 +67,7 @@ useEffect(() => {
                     <Drawer.Positioner>
                     <Drawer.Content>
                         <Drawer.Header>
-                        <Drawer.Title>Drawer Title</Drawer.Title>
+                        <Drawer.Title>Criar editora</Drawer.Title>
                         </Drawer.Header>
                         <Drawer.Body>
                         <p>

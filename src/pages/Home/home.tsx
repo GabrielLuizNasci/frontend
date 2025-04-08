@@ -1,4 +1,4 @@
-import { Button, Flex, Heading } from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 
 export default function Home(){
     return (
@@ -15,11 +15,9 @@ export default function Home(){
                     justifyContent="center"
                     p="2"
                 >
-                    <header className="App-header">
                     <Heading>Bem-vindo!</Heading>
-                    </header>
                 
-                    <Button>Socorro</Button>
+                    <Text>Essa aplicação é responsável por controlas livros e editoras</Text>
                 </Flex>
             </div>
         </>
