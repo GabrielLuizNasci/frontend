@@ -3,7 +3,9 @@ import { Button, Flex, For, Heading, Stack, Table } from "@chakra-ui/react";
 interface Livro {
     id?: number;
     nome: string;
-    autor: string;
+    descricao?: string;
+    edicao: number;
+    lancamento: string; // será convertido para ISO string no formulário
     editoraId?: number | null;
     nomeEditora?: string;
 }
