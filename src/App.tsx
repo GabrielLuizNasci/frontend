@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Flex, Heading } from '@chakra-ui/react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 import { BrowserRouter, Routes, Route } from "react-router";
 import Navbar from './components/navbar/navbar';
 import Home from './pages/Home/home';

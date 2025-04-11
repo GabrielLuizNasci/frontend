@@ -1,11 +1,10 @@
-import { getEditoras } from "../../api/editoras";
-import { 
-    Button, 
-    CloseButton, 
-    Drawer, 
-    DrawerBody, 
-    DrawerContent, DrawerFooter, DrawerHeader, Flex, Heading, Input, Portal, Table, useDisclosure } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { createEditora, deleteEditora, getEditoras, updateEditora } from "../../api/editoras";
+import { Flex, Heading } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import CriarEditoras from "./components/criarEditora";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import AtualizarEditoras from "./components/atualizarEditora";
+import DeletarEditoras from "./components/deletarEditora";
 
 interface Editora {
     id?: number;
@@ -15,10 +14,88 @@ interface Editora {
 
 export default function Editoras(){
 const [editoras, setEditoras] = useState<Editora[]>([]);
+const [modalIncluir, setModalIncluir] = useState(false);
+const [modalAtualizar, setModalAtualizar] = useState(false);
+const [modalExcluir, setModalExcluir] = useState(false);
+const [editoraSelecionada, setEditoraSelecionada] = useState<Editora>({
+    nome: "",
+    quantLivros: 0,
+});
+
+const carregarEditoras = async () => {
+    const data = await getEditoras();
+    setEditoras(data);
+};
 
 useEffect(() => {
-    getEditoras().then(setEditoras);
+    carregarEditoras();
 }, []);
+
+const abrirFecharModalIncluir = () => {
+    setModalIncluir(!modalIncluir);
+    setEditoraSelecionada({ nome: "", quantLivros: 0 });
+};
+
+const abrirFecharModalAtualizar = (editora?: Editora) => {
+    if (editora) {
+        setEditoraSelecionada(editora);
+    }
+    setModalAtualizar(!modalAtualizar);
+};
+
+const abrirFecharModalExcluir = (editora?: Editora) => {
+    setModalExcluir(!modalExcluir);
+    if (editora) setEditoraSelecionada(editora);
+};
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditoraSelecionada((prev) => ({
+        ...prev,
+        [name]: value,
+    }));
+};
+
+const handleCreate = async () => {
+    try {
+        await createEditora({
+        nome: editoraSelecionada.nome,
+        quantLivros: 0, 
+        });
+        abrirFecharModalIncluir();
+        await carregarEditoras();
+    } catch (error) {
+        console.error("Erro ao criar editora:", error);
+    }
+};
+
+const handleUpdate = async () => {
+    if (!editoraSelecionada.id) {
+        console.warn("Editora selecionada sem ID.");
+        return;
+    }
+    try {
+        await updateEditora(editoraSelecionada.id, {
+            id: editoraSelecionada.id!,
+            nome: editoraSelecionada.nome,
+            quantLivros: editoraSelecionada.quantLivros,
+        });
+        abrirFecharModalAtualizar();
+        await carregarEditoras();
+    } catch (error) {
+        console.error("Erro ao atualizar editora:", error);
+    }
+};
+
+const handleDelete = async () => {
+    try {
+      await deleteEditora(editoraSelecionada.id!);
+      abrirFecharModalExcluir();
+      await carregarEditoras();
+    } catch (error) {
+      console.error("Erro ao deletar editora:", error);
+    }
+};
 
     return (
         <>
@@ -34,58 +111,64 @@ useEffect(() => {
                 p="2"
             >
                 <Heading mb="4">Página de Editoras</Heading>
-                
-                <Table.Root size="sm">
-                    <Table.Header>
-                        <Table.Row>
-                        <Table.ColumnHeader>Id</Table.ColumnHeader>
-                        <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                        <Table.ColumnHeader>Número de Livros</Table.ColumnHeader>
-                        <Table.ColumnHeader textAlign="end">Ações</Table.ColumnHeader>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
+                <button className="btn btn-primary mb-3" onClick={abrirFecharModalIncluir}>
+                    Nova Editora
+                </button>
+                <table className="table">
+                    <thead className="table-light">
+                        <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Número de Livros</th>
+                        <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody className="table-group-divider">
                         {editoras.map((editora) => (
-                        <Table.Row key={editora.id}>
-                            <Table.Cell>{editora.id}</Table.Cell>
-                            <Table.Cell>{editora.nome}</Table.Cell>
-                            <Table.Cell textAlign="end">{editora.quantLivros}</Table.Cell>
-                        </Table.Row>
+                            <tr key={editora.id}>
+                                <th scope="row">{editora.id}</th>
+                                <td>{editora.nome}</td>
+                                <td>{editora.quantLivros}</td>
+                                <td>
+                                    <div className="button-gap"> 
+                                        <button className="btn btn-success" onClick={() => {
+                                            setEditoraSelecionada(editora);
+                                            setModalAtualizar(true)
+                                        }}> 
+                                            <Icon icon="mdi:pencil" width="24" height="24" /> 
+                                        </button>
+                                        <button className="btn btn-danger" onClick={() => abrirFecharModalExcluir(editora)}>  
+                                            <Icon icon="mdi:trashcan" width="24" height="24" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         ))}
-                    </Table.Body>
-                </Table.Root>
+                    </tbody>
+                </table>
             </Flex>
-                
-            <Drawer.Root>
-                <Drawer.Trigger asChild>
-                    <Button variant="outline" size="sm">
-                    Criar Editora
-                    </Button>
-                </Drawer.Trigger>
-                <Portal>
-                    <Drawer.Backdrop />
-                    <Drawer.Positioner>
-                    <Drawer.Content>
-                        <Drawer.Header>
-                        <Drawer.Title>Criar editora</Drawer.Title>
-                        </Drawer.Header>
-                        <Drawer.Body>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                        </Drawer.Body>
-                        <Drawer.Footer>
-                        <Button variant="outline">Cancel</Button>
-                        <Button>Save</Button>
-                        </Drawer.Footer>
-                        <Drawer.CloseTrigger asChild>
-                        <CloseButton size="sm" />
-                        </Drawer.CloseTrigger>
-                    </Drawer.Content>
-                    </Drawer.Positioner>
-                </Portal>
-            </Drawer.Root>
+            <CriarEditoras
+                isOpen={modalIncluir}
+                onClose={abrirFecharModalIncluir}
+                onSubmit={handleCreate}
+                onChange={handleChange}
+                formData={{ nome: editoraSelecionada.nome }}
+            />
+
+            <AtualizarEditoras
+                isOpen={modalAtualizar}
+                onClose={() => abrirFecharModalAtualizar()}
+                onSubmit={handleUpdate}
+                onChange={handleChange}
+                formData={editoraSelecionada}
+            />
+
+            <DeletarEditoras
+            isOpen={modalExcluir}
+            onClose={abrirFecharModalExcluir}
+            onConfirmDelete={handleDelete}
+            editoraNome={editoraSelecionada?.nome}
+            />
         </>
     );
 }
