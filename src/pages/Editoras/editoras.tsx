@@ -13,89 +13,89 @@ interface Editora {
 }
 
 export default function Editoras(){
-const [editoras, setEditoras] = useState<Editora[]>([]);
-const [modalIncluir, setModalIncluir] = useState(false);
-const [modalAtualizar, setModalAtualizar] = useState(false);
-const [modalExcluir, setModalExcluir] = useState(false);
-const [editoraSelecionada, setEditoraSelecionada] = useState<Editora>({
-    nome: "",
-    quantLivros: 0,
-});
+    const [editoras, setEditoras] = useState<Editora[]>([]);
+    const [modalIncluir, setModalIncluir] = useState(false);
+    const [modalAtualizar, setModalAtualizar] = useState(false);
+    const [modalExcluir, setModalExcluir] = useState(false);
+    const [editoraSelecionada, setEditoraSelecionada] = useState<Editora>({
+        nome: "",
+        quantLivros: 0,
+    });
 
-const carregarEditoras = async () => {
-    const data = await getEditoras();
-    setEditoras(data);
-};
+    const carregarEditoras = async () => {
+        const data = await getEditoras();
+        setEditoras(data);
+    };
 
-useEffect(() => {
-    carregarEditoras();
-}, []);
+    useEffect(() => {
+        carregarEditoras();
+    }, []);
 
-const abrirFecharModalIncluir = () => {
-    setModalIncluir(!modalIncluir);
-    setEditoraSelecionada({ nome: "", quantLivros: 0 });
-};
+    const abrirFecharModalIncluir = () => {
+        setModalIncluir(!modalIncluir);
+        setEditoraSelecionada({ nome: "", quantLivros: 0 });
+    };
 
-const abrirFecharModalAtualizar = (editora?: Editora) => {
-    if (editora) {
-        setEditoraSelecionada(editora);
-    }
-    setModalAtualizar(!modalAtualizar);
-};
+    const abrirFecharModalAtualizar = (editora?: Editora) => {
+        if (editora) {
+            setEditoraSelecionada(editora);
+        }
+        setModalAtualizar(!modalAtualizar);
+    };
 
-const abrirFecharModalExcluir = (editora?: Editora) => {
-    setModalExcluir(!modalExcluir);
-    if (editora) setEditoraSelecionada(editora);
-};
+    const abrirFecharModalExcluir = (editora?: Editora) => {
+        setModalExcluir(!modalExcluir);
+        if (editora) setEditoraSelecionada(editora);
+    };
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEditoraSelecionada((prev) => ({
-        ...prev,
-        [name]: value,
-    }));
-};
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditoraSelecionada((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-const handleCreate = async () => {
-    try {
-        await createEditora({
-        nome: editoraSelecionada.nome,
-        quantLivros: 0, 
-        });
-        abrirFecharModalIncluir();
-        await carregarEditoras();
-    } catch (error) {
-        console.error("Erro ao criar editora:", error);
-    }
-};
-
-const handleUpdate = async () => {
-    if (!editoraSelecionada.id) {
-        console.warn("Editora selecionada sem ID.");
-        return;
-    }
-    try {
-        await updateEditora(editoraSelecionada.id, {
-            id: editoraSelecionada.id!,
+    const handleCreate = async () => {
+        try {
+            await createEditora({
             nome: editoraSelecionada.nome,
-            quantLivros: editoraSelecionada.quantLivros,
-        });
-        abrirFecharModalAtualizar();
-        await carregarEditoras();
-    } catch (error) {
-        console.error("Erro ao atualizar editora:", error);
-    }
-};
+            quantLivros: 0, 
+            });
+            abrirFecharModalIncluir();
+            await carregarEditoras();
+        } catch (error) {
+            console.error("Erro ao criar editora:", error);
+        }
+    };
 
-const handleDelete = async () => {
-    try {
-      await deleteEditora(editoraSelecionada.id!);
-      abrirFecharModalExcluir();
-      await carregarEditoras();
-    } catch (error) {
-      console.error("Erro ao deletar editora:", error);
-    }
-};
+    const handleUpdate = async () => {
+        if (!editoraSelecionada.id) {
+            console.warn("Editora selecionada sem ID.");
+            return;
+        }
+        try {
+            await updateEditora(editoraSelecionada.id, {
+                id: editoraSelecionada.id!,
+                nome: editoraSelecionada.nome,
+                quantLivros: editoraSelecionada.quantLivros,
+            });
+            abrirFecharModalAtualizar();
+            await carregarEditoras();
+        } catch (error) {
+            console.error("Erro ao atualizar editora:", error);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+        await deleteEditora(editoraSelecionada.id!);
+        abrirFecharModalExcluir();
+        await carregarEditoras();
+        } catch (error) {
+        console.error("Erro ao deletar editora:", error);
+        }
+    };
 
     return (
         <>

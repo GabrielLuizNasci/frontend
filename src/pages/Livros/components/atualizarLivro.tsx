@@ -1,6 +1,6 @@
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 
-interface CriarLivrosProps {
+interface AtualizarLivrosProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: () => void;
@@ -16,16 +16,16 @@ interface CriarLivrosProps {
       id: number;
       nome: string;
     }[];
-}
+  }
 
-export default function CriarLivros({
+export default function AtualizarLivros({
     isOpen,
     onClose,
     onSubmit,
     onChange,
     formData,
     editoras
-}: CriarLivrosProps){
+}: AtualizarLivrosProps){
 
     return (
         <>
@@ -95,7 +95,7 @@ export default function CriarLivros({
                 </div>
                 </ModalBody>
                 <ModalFooter>
-                    <button className="btn btn-success" onClick={onSubmit}> Incluir </button>
+                    <button className="btn btn-success" onClick={onSubmit}>Atualizar</button>
                     <button className="btn btn-danger" onClick={onClose}>Cancelar</button>
                 </ModalFooter>
             </Modal>
